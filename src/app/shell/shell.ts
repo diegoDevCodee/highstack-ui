@@ -19,7 +19,7 @@ export class Shell {
   protected readonly pageNav = inject(PageNavService);
   protected readonly theme = inject(ThemeService);
 
-  protected readonly version = '1.6.1';
+  protected readonly version = '1.7.0';
 
   protected readonly gettingStarted: NavItem[] = [
     { label: 'Instalación', route: '/installation' },

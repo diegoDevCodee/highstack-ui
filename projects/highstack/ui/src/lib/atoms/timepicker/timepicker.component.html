@@ -7,12 +7,15 @@
   [placeholder]="placeholder()"
   [size]="size()"
   [disabled]="isDisabled()"
-  [readonly]="readonly()"
+  [readonly]="readonly() || !typeable()"
   [required]="required()"
   [value]="text()"
+  [attr.data-picker-only]="!typeable() && !readonly() ? '' : null"
   (valueChange)="onTextInput($event)"
   (focusin)="onFocus()"
   (focusout)="onBlur()"
+  (click)="onFieldClick()"
+  (keydown)="onFieldKeydown($event)"
 >
   <button
     slot="suffix"
@@ -23,7 +26,7 @@
     [attr.aria-haspopup]="'dialog'"
     [attr.aria-expanded]="open()"
     [attr.aria-label]="'Abrir selector de hora'"
-    (click)="toggle()"
+    (click)="toggle(); $event.stopPropagation()"
     class="shrink-0 inline-flex items-center text-[var(--color-muted-foreground)] transition-colors hover:text-[var(--color-foreground)] cursor-pointer disabled:cursor-not-allowed"
   >
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>

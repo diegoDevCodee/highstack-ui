@@ -109,6 +109,16 @@ export class TimepickerComponent implements ControlValueAccessor {
   readonly readonly = input(false, { transform: booleanAttribute });
   readonly required = input(false, { transform: booleanAttribute });
 
+  /**
+   * Permite escribir la hora a mano.
+   *
+   * Por defecto está apagado: el campo entero se comporta como el trigger de un
+   * select — un clic en cualquier parte abre el panel y no se puede teclear.
+   * Ponlo a `true` para recuperar el campo de texto con su parseo (`9`, `930`,
+   * `9:30 pm`, `21:30`…).
+   */
+  readonly typeable = input(false, { transform: booleanAttribute });
+
   /** Mensaje de error manual (tiene prioridad sobre todo lo demás). */
   readonly error = input<string>('');
   readonly invalid = input(false, { transform: booleanAttribute });
@@ -439,6 +449,28 @@ export class TimepickerComponent implements ControlValueAccessor {
   protected toggle() {
     if (this.isDisabled() || this.readonly()) return;
     this.open() ? this.close() : this.openPanel();
+  }
+
+  /**
+   * En modo solo-selección toda la caja es el trigger, no solo el reloj del
+   * final. `readonly` sigue significando campo inerte: ni se teclea ni se abre
+   * nada.
+   */
+  protected onFieldClick() {
+    if (this.typeable()) return;
+    this.toggle();
+  }
+
+  /**
+   * Teclado del campo en modo solo-selección: se abre igual que un `ui-select`.
+   * Con `typeable` no se toca nada, para no comerse el Espacio de quien escribe.
+   */
+  protected onFieldKeydown(event: KeyboardEvent) {
+    if (this.typeable() || this.open()) return;
+    if (event.key === 'Enter' || event.key === ' ' || event.key === 'ArrowDown') {
+      event.preventDefault();
+      this.toggle();
+    }
   }
 
   private openPanel() {

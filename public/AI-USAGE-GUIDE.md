@@ -257,13 +257,16 @@ protected readonly puedeEnviar = computed(() => checkE164(this.telefono()) === '
 `DatepickerComponent` · `<ui-datepicker>`
 - Campo de fecha: compone `ui-input` (campo, label y mensaje) con `ui-calendar` (panel flotante).
 - **El valor es un string ISO `'YYYY-MM-DD'`, o `''` si no hay fecha. NUNCA un `Date`.**
-- Se puede **teclear o elegir**. El orden al teclear lo define el locale (`dd/mm/aaaa` en es-MX, `mm/dd/aaaa` en en-US).
-- `value` (model), `label`, `hint`, `error`, `placeholder`, `name`, `id`, `size` (`'sm'|'md'|'lg'`), `disabled`, `readonly`, `required`, `invalid`, `touched`, `errors`, más los del calendario: `locale`, `weekStartsOn`, `min`, `max`, `disabledDates`, `dateDisabled`.
+- **Por defecto NO se teclea: se elige.** Toda la caja es el trigger — un clic en cualquier parte abre el calendario, igual que un `ui-select`. Así no entra basura en el campo.
+- Con **`typeable`** se recupera el campo de texto y su parseo. El orden al teclear lo define el locale (`dd/mm/aaaa` en es-MX, `mm/dd/aaaa` en en-US). Útil para fechas lejanas (una de nacimiento) donde navegar el calendario es lento.
+- `value` (model), `label`, `hint`, `error`, `placeholder`, `name`, `id`, `size` (`'sm'|'md'|'lg'`), `typeable` (def. `false`), `disabled`, `readonly`, `required`, `invalid`, `touched`, `errors`, más los del calendario: `locale`, `weekStartsOn`, `min`, `max`, `disabledDates`, `dateDisabled`.
 - Forms: `[(value)]`, `[formField]`, `formControlName`, `ngModel`.
-- Los errores de formato aparecen solo al salir del campo, nunca mientras se escribe.
+- Teclado: sin `typeable`, Enter, Espacio o ↓ abren el calendario. `readonly` sigue significando campo inerte: ni se teclea ni se abre nada.
+- Los errores de formato (solo posibles con `typeable`) aparecen al salir del campo, nunca mientras se escribe.
 
 ```html
-<ui-datepicker label="Fecha de nacimiento" [(value)]="fecha" hint="Puedes escribirla o elegirla." />
+<ui-datepicker label="Fecha de la cita" [(value)]="fecha" />
+<ui-datepicker label="Fecha de nacimiento" [typeable]="true" [(value)]="fecha" hint="Puedes escribirla o elegirla." />
 <ui-datepicker label="Cita" min="2026-08-01" max="2026-12-31" [formField]="form.cita" />
 <ui-datepicker label="Entrega" [disabledDates]="feriados" [formControl]="ctrl" />
 ```
@@ -272,15 +275,18 @@ protected readonly puedeEnviar = computed(() => checkE164(this.telefono()) === '
 `TimepickerComponent` · `<ui-timepicker>`
 - Campo de hora: compone `ui-input` (campo, label y mensaje) con un panel de columnas (horas | minutos | [segundos] | AM·PM).
 - **El valor es un string en 24h `'HH:mm'` (o `'HH:mm:ss'` con `showSeconds`), o `''` si no hay hora. NUNCA un `Date`.** El formato de 12 horas con AM/PM es solo presentación: lo que ve el formulario no cambia.
-- Se puede **teclear o elegir**. Al teclear acepta `9`, `930`, `9:30`, `9:30 pm`, `9 PM`, `21:30`, `9:30:15`.
-- `value` (model), `label`, `hint`, `error`, `placeholder`, `name`, `id`, `size` (`'sm'|'md'|'lg'`), `disabled`, `readonly`, `required`, `invalid`, `touched`, `errors`, `locale` (def. `'es-MX'`), `hourFormat` (`12 | 24 | 'auto'`, def. `'auto'`), `showSeconds`, `minuteStep` (def. `5`), `min`, `max` (`'HH:mm[:ss]'`), `disabledTimes` (`readonly string[]`), `timeDisabled` (`(iso: string) => boolean`).
+- **Por defecto NO se teclea: se elige.** Toda la caja es el trigger — un clic en cualquier parte abre el panel, igual que un `ui-select`.
+- Con **`typeable`** se recupera el campo de texto y su parseo: acepta `9`, `930`, `9:30`, `9:30 pm`, `9 PM`, `21:30`, `9:30:15`.
+- `value` (model), `label`, `hint`, `error`, `placeholder`, `name`, `id`, `size` (`'sm'|'md'|'lg'`), `typeable` (def. `false`), `disabled`, `readonly`, `required`, `invalid`, `touched`, `errors`, `locale` (def. `'es-MX'`), `hourFormat` (`12 | 24 | 'auto'`, def. `'auto'`), `showSeconds`, `minuteStep` (def. `5`), `min`, `max` (`'HH:mm[:ss]'`), `disabledTimes` (`readonly string[]`), `timeDisabled` (`(iso: string) => boolean`).
 - `hourFormat: 'auto'` deriva el formato del locale (es-MX → 12h, es-ES → 24h). El texto de AM/PM sale de `Intl`: no hay nada hardcodeado.
 - Forms: `[(value)]`, `[formField]`, `formControlName`, `ngModel`.
-- Los errores de formato aparecen solo al salir del campo, nunca mientras se escribe.
+- Teclado: sin `typeable`, Enter, Espacio o ↓ abren el panel. `readonly` sigue significando campo inerte.
+- Los errores de formato (solo posibles con `typeable`) aparecen al salir del campo, nunca mientras se escribe.
 - **Elegir en una columna NO cierra el panel** (a diferencia del datepicker): faltan los minutos. Se cierra con Escape, clic afuera, Tab afuera o el botón "Listo". El pie tiene también "Ahora".
 
 ```html
-<ui-timepicker label="Hora de la cita" [(value)]="hora" hint="Puedes escribirla o elegirla." />
+<ui-timepicker label="Hora de la cita" [(value)]="hora" />
+<ui-timepicker label="Hora de entrada" [typeable]="true" [(value)]="hora" hint="Puedes escribirla o elegirla." />
 <ui-timepicker label="Turno" [hourFormat]="24" [minuteStep]="15" [(value)]="hora" />
 <ui-timepicker label="Cita" min="09:00" max="18:00" [formField]="form.cita" />
 <ui-timepicker label="Marca" [showSeconds]="true" [formControl]="ctrl" />

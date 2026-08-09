@@ -65,6 +65,17 @@ export class DatepickerComponent implements ControlValueAccessor {
   readonly readonly = input(false, { transform: booleanAttribute });
   readonly required = input(false, { transform: booleanAttribute });
 
+  /**
+   * Permite escribir la fecha a mano.
+   *
+   * Por defecto está apagado: el campo entero se comporta como el trigger de un
+   * select — un clic en cualquier parte abre el calendario y no se puede
+   * teclear. Ponlo a `true` para recuperar el campo de texto con su parseo
+   * (`31/12/2026`, `31-12-26`…), que sigue siendo más rápido para fechas
+   * lejanas como una de nacimiento.
+   */
+  readonly typeable = input(false, { transform: booleanAttribute });
+
   /** Mensaje de error manual (tiene prioridad sobre todo lo demás). */
   readonly error = input<string>('');
   readonly invalid = input(false, { transform: booleanAttribute });
@@ -226,6 +237,28 @@ export class DatepickerComponent implements ControlValueAccessor {
   protected toggle() {
     if (this.isDisabled() || this.readonly()) return;
     this.open() ? this.close() : this.openPanel();
+  }
+
+  /**
+   * En modo solo-selección toda la caja es el trigger, no solo el iconito del
+   * calendario. `readonly` sigue significando campo inerte: ni se teclea ni se
+   * abre nada.
+   */
+  protected onFieldClick() {
+    if (this.typeable()) return;
+    this.toggle();
+  }
+
+  /**
+   * Teclado del campo en modo solo-selección: se abre igual que un `ui-select`.
+   * Con `typeable` no se toca nada, para no comerse el Espacio de quien escribe.
+   */
+  protected onFieldKeydown(event: KeyboardEvent) {
+    if (this.typeable() || this.open()) return;
+    if (event.key === 'Enter' || event.key === ' ' || event.key === 'ArrowDown') {
+      event.preventDefault();
+      this.toggle();
+    }
   }
 
   private openPanel() {
