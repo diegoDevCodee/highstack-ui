@@ -323,7 +323,7 @@ export class OptionComponent {
       'flex items-center gap-2 rounded-md px-2 py-1.5 text-sm cursor-pointer select-none outline-none transition-colors text-[var(--color-foreground)]';
     const state = this.disabled()
       ? 'opacity-50 pointer-events-none'
-      : 'hover:bg-[var(--color-accent)] focus:bg-[var(--color-accent)]';
+      : 'hover:bg-[var(--color-accent)] focus-visible:bg-[var(--color-accent)] focus-visible:ring-1 focus-visible:ring-[var(--color-ring)]';
     return [base, state].join(' ');
   });
 
